@@ -28,7 +28,7 @@ type URL struct {
 func NewURLSet() *URLSet {
 	us := &URLSet{}
 	us.XMLNS = xmlNS
-	us.Limit = 3
+	us.Limit = 50000
 	return us
 }
 
