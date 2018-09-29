@@ -15,6 +15,7 @@ type URLSet struct {
 	XMLNS   string   `xml:"xmlns,attr"`
 	URLs    []URL    `xml:"url"`
 	Limit   int      `xml:"-"`
+	Prefix  string   `xml:"_"`
 }
 
 // URL は <url> の構造定義です.
@@ -67,6 +68,11 @@ func (us *URLSet) outputSingleFile(p string, i int, urls []URL) {
 	_, err = f.Write(b)
 	if err != nil {
 		log.Fatal(err)
+	}
+	if us.Prefix != "" {
+		for i, u := range urls {
+			urls[i].Loc = us.Prefix + u.Loc
+		}
 	}
 	us.URLs = urls
 	b, err = xml.MarshalIndent(us, "", "    ")
