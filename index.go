@@ -68,7 +68,7 @@ func (idx *Index) Output() {
 	}
 	smi := &sitemapindex{XMLNS: xmlNS}
 	for p, us := range idx.urlsets {
-		for i := 0; i <= len(us.URLs)/us.limit; i++ {
+		for i := 0; i <= len(us.URLs)/us.Limit; i++ {
 			name := addExt(addNum(p, i))
 			loc := idx.URLPrefix.Scheme + "://" + idx.URLPrefix.Hostname() + path.Join("/", idx.URLPrefix.Path, name)
 			lastMod := time.Now().Format("2006-01-02")

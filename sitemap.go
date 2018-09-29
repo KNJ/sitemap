@@ -14,7 +14,7 @@ type URLSet struct {
 	XMLName xml.Name `xml:"urlset"`
 	XMLNS   string   `xml:"xmlns,attr"`
 	URLs    []URL    `xml:"url"`
-	limit   int
+	Limit   int      `xml:"-"`
 }
 
 // URL は <url> の構造定義です.
@@ -28,7 +28,7 @@ type URL struct {
 func NewURLSet() *URLSet {
 	us := &URLSet{}
 	us.XMLNS = xmlNS
-	us.limit = 3
+	us.Limit = 3
 	return us
 }
 
@@ -49,8 +49,8 @@ func (us *URLSet) AddURL(url URL) *URLSet {
 // Output はファイルを書き出します.
 func (us *URLSet) Output(p string) {
 	urls := us.URLs
-	for i := 0; i <= len(urls)/us.limit; i++ {
-		us.outputSingleFile(p, i, urls[i*us.limit:min((i+1)*us.limit, len(urls))])
+	for i := 0; i <= len(urls)/us.Limit; i++ {
+		us.outputSingleFile(p, i, urls[i*us.Limit:min((i+1)*us.Limit, len(urls))])
 	}
 }
 
