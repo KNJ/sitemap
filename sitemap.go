@@ -7,7 +7,6 @@ import (
 	"strconv"
 )
 
-const xmlDec string = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n"
 const xmlNS string = "http://www.sitemaps.org/schemas/sitemap/0.9"
 
 // URLSet は <urlset> の構造定義です.
@@ -64,7 +63,7 @@ func (us *URLSet) outputSingleFile(p string, i int, urls []URL) {
 		log.Fatal(err)
 	}
 	defer f.Close()
-	b := []byte(xmlDec)
+	b := []byte(xml.Header)
 	_, err = f.Write(b)
 	if err != nil {
 		log.Fatal(err)

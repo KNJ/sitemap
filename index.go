@@ -61,7 +61,7 @@ func (idx *Index) Output() {
 		log.Fatal(err)
 	}
 	defer file.Close()
-	b := []byte(xmlDec)
+	b := []byte(xml.Header)
 	_, err = file.Write(b)
 	if err != nil {
 		log.Fatal(err)
