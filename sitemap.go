@@ -15,7 +15,7 @@ type URLSet struct {
 	XMLNS   string   `xml:"xmlns,attr"`
 	URLs    []URL    `xml:"url"`
 	Limit   int      `xml:"-"`
-	Prefix  string   `xml:"_"`
+	Prefix  string   `xml:"-"`
 }
 
 // URL は <url> の構造定義です.
