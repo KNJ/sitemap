@@ -15,6 +15,7 @@ type Index struct {
 	Basedir   string
 	Filename  string
 	URLPrefix *url.URL
+	Ugly      bool
 }
 
 type sitemapindex struct {
@@ -63,7 +64,7 @@ func (idx *Index) Output() {
 			smi.Sitemaps = append(smi.Sitemaps, sm)
 		}
 	}
-	err := writeXML(name, smi)
+	err := writeXML(name, smi, idx.Ugly)
 	if err != nil {
 		log.Fatal(err)
 	}
