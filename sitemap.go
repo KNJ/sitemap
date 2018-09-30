@@ -56,41 +56,41 @@ func (us *URLSet) Output(p string) {
 }
 
 func (us *URLSet) outputSingleFile(p string, i int, urls []URL) {
-	var f *os.File
-	var err error
-	name := addExt(addNum(p, i))
-	f, err = os.OpenFile(name, os.O_WRONLY|os.O_CREATE|os.O_APPEND|os.O_TRUNC, 0600)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer f.Close()
-	b := []byte(xml.Header)
-	_, err = f.Write(b)
-	if err != nil {
-		log.Fatal(err)
-	}
+	p = addNum(p, i)
 	if us.Prefix != "" {
 		for i, u := range urls {
 			urls[i].Loc = us.Prefix + u.Loc
 		}
 	}
 	us.URLs = urls
-	b, err = xml.MarshalIndent(us, "", "    ")
+	err := writeXML(p, *us)
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func writeXML(p string, xs interface{}) (err error) {
+	var f *os.File
+	f, err = os.OpenFile(p+".xml", os.O_WRONLY|os.O_CREATE|os.O_APPEND|os.O_TRUNC, 0600)
+	defer f.Close()
+	if err != nil {
+		return
+	}
+	b := []byte(xml.Header)
 	_, err = f.Write(b)
 	if err != nil {
-		log.Fatal(err)
+		return
 	}
+	b, err = xml.MarshalIndent(xs, "", "    ")
+	if err != nil {
+		return
+	}
+	_, err = f.Write(b)
+	return
 }
 
 func addNum(base string, i int) string {
 	return base + "_" + strconv.Itoa(i)
-}
-
-func addExt(base string) string {
-	return base + ".xml"
 }
 
 func min(x int, y int) int {

@@ -4,7 +4,6 @@ import (
 	"encoding/xml"
 	"log"
 	"net/url"
-	"os"
 	"path"
 	"path/filepath"
 	"time"
@@ -53,34 +52,18 @@ func (idx *Index) Add(filename string, us URLSet) *Index {
 
 // Output はサイトマップの index ファイルを生成します.
 func (idx *Index) Output() {
-	var file *os.File
-	var err error
-	name := addExt(filepath.Join(idx.Basedir, idx.Filename))
-	file, err = os.OpenFile(name, os.O_WRONLY|os.O_CREATE|os.O_APPEND|os.O_TRUNC, 0600)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer file.Close()
-	b := []byte(xml.Header)
-	_, err = file.Write(b)
-	if err != nil {
-		log.Fatal(err)
-	}
+	name := filepath.Join(idx.Basedir, idx.Filename)
 	smi := &sitemapindex{XMLNS: xmlNS}
 	for p, us := range idx.urlsets {
 		for i := 0; i <= len(us.URLs)/us.Limit; i++ {
-			name := addExt(addNum(p, i))
+			name := addNum(p, i) + ".xml"
 			loc := idx.URLPrefix.Scheme + "://" + idx.URLPrefix.Hostname() + path.Join("/", idx.URLPrefix.Path, name)
 			lastMod := time.Now().Format("2006-01-02")
 			sm := sitemap{Loc: loc, LastMod: lastMod}
 			smi.Sitemaps = append(smi.Sitemaps, sm)
 		}
 	}
-	b, err = xml.MarshalIndent(smi, "", "    ")
-	if err != nil {
-		log.Fatal(err)
-	}
-	_, err = file.Write(b)
+	err := writeXML(name, smi)
 	if err != nil {
 		log.Fatal(err)
 	}
