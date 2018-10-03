@@ -5,17 +5,14 @@ import (
 	"log"
 	"net/url"
 	"path"
-	"path/filepath"
 	"time"
 )
 
 // Index はサイトマップの index の構造定義です.
 type Index struct {
 	urlsets   map[string]URLSet
-	Basedir   string
 	Filename  string
 	URLPrefix *url.URL
-	Ugly      bool
 }
 
 type sitemapindex struct {
@@ -52,8 +49,7 @@ func (idx *Index) Add(filename string, us URLSet) *Index {
 }
 
 // Output はサイトマップの index ファイルを生成します.
-func (idx *Index) Output() {
-	name := filepath.Join(idx.Basedir, idx.Filename)
+func (idx *Index) output(d driver) {
 	smi := &sitemapindex{XMLNS: xmlNS}
 	for p, us := range idx.urlsets {
 		for i := 0; i <= len(us.URLs)/us.Limit; i++ {
@@ -64,16 +60,16 @@ func (idx *Index) Output() {
 			smi.Sitemaps = append(smi.Sitemaps, sm)
 		}
 	}
-	err := writeXML(name, smi, idx.Ugly)
+	err := d.writeXML(idx.Filename, smi)
 	if err != nil {
 		log.Fatal(err)
 	}
 }
 
 // Generate はサイトマップの index と各ファイルを生成します.
-func (idx *Index) Generate() {
-	idx.Output()
+func (idx *Index) Generate(d driver) {
+	idx.output(d)
 	for p, us := range idx.urlsets {
-		us.Output(filepath.Join(idx.Basedir, p))
+		us.output(d, p)
 	}
 }

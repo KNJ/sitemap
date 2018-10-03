@@ -12,7 +12,6 @@ type URLSet struct {
 	URLs    []URL    `xml:"url"`
 	Limit   int      `xml:"-"`
 	Prefix  string   `xml:"-"`
-	Ugly    bool     `xml:"-"`
 }
 
 // URL は <url> の構造定義です.
@@ -45,14 +44,14 @@ func (us *URLSet) AddURL(url URL) *URLSet {
 }
 
 // Output はファイルを書き出します.
-func (us *URLSet) Output(p string) {
+func (us *URLSet) output(d driver, p string) {
 	urls := us.URLs
 	for i := 0; i <= len(urls)/us.Limit; i++ {
-		us.outputSingleFile(p, i, urls[i*us.Limit:min((i+1)*us.Limit, len(urls))])
+		us.outputSingleFile(d, p, i, urls[i*us.Limit:min((i+1)*us.Limit, len(urls))])
 	}
 }
 
-func (us *URLSet) outputSingleFile(p string, i int, urls []URL) {
+func (us *URLSet) outputSingleFile(d driver, p string, i int, urls []URL) {
 	p = addNum(p, i)
 	if us.Prefix != "" {
 		for i, u := range urls {
@@ -60,7 +59,7 @@ func (us *URLSet) outputSingleFile(p string, i int, urls []URL) {
 		}
 	}
 	us.URLs = urls
-	err := writeXML(p, *us, us.Ugly)
+	err := d.writeXML(p, *us)
 	if err != nil {
 		log.Fatal(err)
 	}
