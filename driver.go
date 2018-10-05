@@ -39,3 +39,9 @@ func (d *FileDriver) writeXML(name string, xs interface{}, ugly bool) (err error
 	_, err = f.Write(b)
 	return
 }
+
+type dummyDriver struct{}
+
+func (d *dummyDriver) writeXML(name string, xs interface{}, ugly bool) error {
+	return nil
+}

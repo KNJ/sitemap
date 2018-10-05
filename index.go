@@ -50,7 +50,7 @@ func (idx *Index) Add(filename string, us URLSet) *Index {
 }
 
 // Output はサイトマップの index ファイルを生成します.
-func (idx *Index) output(d driver) {
+func (idx *Index) output(d driver) (err error) {
 	smi := &sitemapindex{XMLNS: xmlNS}
 	for p, us := range idx.urlsets {
 		for i := 0; i <= len(us.URLs)/us.Limit; i++ {
@@ -64,15 +64,16 @@ func (idx *Index) output(d driver) {
 			smi.Sitemaps = append(smi.Sitemaps, sm)
 		}
 	}
-	err := d.writeXML(idx.Filename, smi, idx.Ugly)
-	if err != nil {
-		log.Fatal(err)
-	}
+	err = d.writeXML(idx.Filename, smi, idx.Ugly)
+	return
 }
 
 // Generate はサイトマップの index と各ファイルを生成します.
 func (idx *Index) Generate(d driver) {
-	idx.output(d)
+	err := idx.output(d)
+	if err != nil {
+		log.Fatal(err)
+	}
 	for p, us := range idx.urlsets {
 		us.output(d, p)
 	}
