@@ -13,6 +13,7 @@ type Index struct {
 	urlsets   map[string]URLSet
 	Filename  string
 	URLPrefix *url.URL
+	Ugly      bool
 }
 
 type sitemapindex struct {
@@ -60,7 +61,7 @@ func (idx *Index) output(d driver) {
 			smi.Sitemaps = append(smi.Sitemaps, sm)
 		}
 	}
-	err := d.writeXML(idx.Filename, smi)
+	err := d.writeXML(idx.Filename, smi, idx.Ugly)
 	if err != nil {
 		log.Fatal(err)
 	}

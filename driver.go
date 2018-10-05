@@ -7,7 +7,7 @@ import (
 )
 
 type driver interface {
-	writeXML(string, interface{}) error
+	writeXML(string, interface{}, bool) error
 }
 
 // FileDriver はXMLファイルを書き出すためのドライバです.
@@ -16,7 +16,7 @@ type FileDriver struct {
 	Ugly     bool
 }
 
-func (d *FileDriver) writeXML(name string, xs interface{}) (err error) {
+func (d *FileDriver) writeXML(name string, xs interface{}, ugly bool) (err error) {
 	var f *os.File
 	f, err = newXMLFile(filepath.Join(d.BasePath, name))
 	defer f.Close()
@@ -28,7 +28,7 @@ func (d *FileDriver) writeXML(name string, xs interface{}) (err error) {
 	if err != nil {
 		return
 	}
-	if d.Ugly {
+	if ugly {
 		b, err = xml.Marshal(xs)
 	} else {
 		b, err = xml.MarshalIndent(xs, "", "    ")

@@ -12,6 +12,7 @@ type URLSet struct {
 	URLs    []URL    `xml:"url"`
 	Limit   int      `xml:"-"`
 	Prefix  string   `xml:"-"`
+	Ugly    bool     `xml:"-"`
 }
 
 // URL は <url> の構造定義です.
@@ -59,7 +60,7 @@ func (us *URLSet) outputSingleFile(d driver, p string, i int, urls []URL) {
 		}
 	}
 	us.URLs = urls
-	err := d.writeXML(p, *us)
+	err := d.writeXML(p, *us, us.Ugly)
 	if err != nil {
 		log.Fatal(err)
 	}
