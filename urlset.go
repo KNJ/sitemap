@@ -48,7 +48,11 @@ func (us *URLSet) AddURL(url URL) *URLSet {
 func (us *URLSet) output(d driver, p string) {
 	urls := us.URLs
 	for i := 0; i <= len(urls)/us.Limit; i++ {
-		us.outputSingleFile(d, p, i, urls[i*us.Limit:min((i+1)*us.Limit, len(urls))])
+		start := i * us.Limit
+		end := min((i+1)*us.Limit, len(urls))
+		if start != end {
+			us.outputSingleFile(d, p, i, urls[start:end])
+		}
 	}
 }
 

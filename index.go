@@ -54,6 +54,9 @@ func (idx *Index) output(d driver) {
 	smi := &sitemapindex{XMLNS: xmlNS}
 	for p, us := range idx.urlsets {
 		for i := 0; i <= len(us.URLs)/us.Limit; i++ {
+			if len(us.URLs)%us.Limit == 0 && i == len(us.URLs)/us.Limit {
+				break
+			}
 			name := addNum(p, i) + ".xml"
 			loc := idx.URLPrefix.Scheme + "://" + idx.URLPrefix.Hostname() + path.Join("/", idx.URLPrefix.Path, name)
 			lastMod := time.Now().Format("2006-01-02")
