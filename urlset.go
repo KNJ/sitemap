@@ -2,7 +2,6 @@ package sitemap
 
 import (
 	"encoding/xml"
-	"log"
 )
 
 // URLSet は <urlset> の構造定義です.
@@ -45,18 +44,22 @@ func (us *URLSet) AddURL(url URL) *URLSet {
 }
 
 // Output はファイルを書き出します.
-func (us *URLSet) output(d driver, p string) {
+func (us *URLSet) output(d driver, p string) (err error) {
 	urls := us.URLs
 	for i := 0; i <= len(urls)/us.Limit; i++ {
 		start := i * us.Limit
 		end := min((i+1)*us.Limit, len(urls))
 		if start != end {
-			us.outputSingleFile(d, p, i, urls[start:end])
+			err = us.outputSingleFile(d, p, i, urls[start:end])
+			if err != nil {
+				return
+			}
 		}
 	}
+	return
 }
 
-func (us *URLSet) outputSingleFile(d driver, p string, i int, urls []URL) {
+func (us *URLSet) outputSingleFile(d driver, p string, i int, urls []URL) (err error) {
 	p = addNum(p, i)
 	if us.Prefix != "" {
 		for i, u := range urls {
@@ -64,8 +67,6 @@ func (us *URLSet) outputSingleFile(d driver, p string, i int, urls []URL) {
 		}
 	}
 	us.URLs = urls
-	err := d.writeXML(p, *us, us.Ugly)
-	if err != nil {
-		log.Fatal(err)
-	}
+	err = d.writeXML(p, *us, us.Ugly)
+	return
 }

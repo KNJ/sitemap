@@ -2,7 +2,6 @@ package sitemap
 
 import (
 	"encoding/xml"
-	"log"
 	"net/url"
 	"path"
 	"time"
@@ -69,12 +68,16 @@ func (idx *Index) output(d driver) (err error) {
 }
 
 // Generate はサイトマップの index と各ファイルを生成します.
-func (idx *Index) Generate(d driver) {
-	err := idx.output(d)
+func (idx *Index) Generate(d driver) (err error) {
+	err = idx.output(d)
 	if err != nil {
-		log.Fatal(err)
+		return
 	}
 	for p, us := range idx.urlsets {
-		us.output(d, p)
+		err = us.output(d, p)
+		if err != nil {
+			return
+		}
 	}
+	return
 }

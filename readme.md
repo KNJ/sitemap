@@ -34,7 +34,10 @@ func main() {
 	}
 	idx.Add("works", *us1)
 	idx.Add("todo", *us2)
-	idx.Generate(&sitemap.FileDriver{BasePath: filepath.Join(wd, "xml")})
+	err = idx.Generate(&sitemap.FileDriver{BasePath: filepath.Join(wd, "xml")})
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func urlPrefix(s string) func(*sitemap.Index) {
